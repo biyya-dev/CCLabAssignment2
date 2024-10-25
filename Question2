@@ -1,0 +1,56 @@
+using System;
+using System.Text.RegularExpressions;
+
+public class PasswordGenerator
+{
+    public static string GeneratePassword(string registrationNumber, string firstName, string lastName, string movie)
+    {
+        // Step 1: Extract two digits from the registration number
+        string regDigits = Regex.Match(registrationNumber, @"\d{2}").Value;
+
+        // Step 2: Extract the second letters from first and last names
+        string secondLetterFirstName = firstName.Length >= 2 ? firstName[1].ToString() : "";
+        string secondLetterLastName = lastName.Length >= 2 ? lastName[1].ToString() : "";
+
+        // Step 3: Extract two characters from favorite movie
+        string movieChars = movie.Length >= 2 ? movie.Substring(0, 2) : "";
+
+        // Step 4: Include special characters, avoiding '#'
+        string specialChars = "@$%&*";
+
+        // Combine elements
+        string combined = regDigits + secondLetterFirstName + secondLetterLastName + movieChars + specialChars;
+
+        // Adjust the password length to 14
+        if (combined.Length < 14)
+        {
+            combined += new string('X', 14 - combined.Length);  // Fill with 'X' if needed
+        }
+        else if (combined.Length > 14)
+        {
+            combined = combined.Substring(0, 14); // Trim to 14 characters
+        }
+
+        // Validate length and lack of '#' character
+        if (combined.Length == 14 && !combined.Contains("#"))
+        {
+            return combined;
+        }
+        else
+        {
+            throw new Exception("Password generation failed.");
+        }
+    }
+
+    public static void Main()
+    {
+        // Example usage
+        string registrationNumber = "25"; // Replace with actual registration number
+        string firstName = "Areeba"; // Replace with actual first name
+        string lastName = "Eman"; // Replace with actual last name
+        string movie = "World War Z"; // Replace with actual favorite movie
+        
+        string password = GeneratePassword(registrationNumber, firstName, lastName, movie);
+        Console.WriteLine("Generated Password is: " + password);
+    }
+}
